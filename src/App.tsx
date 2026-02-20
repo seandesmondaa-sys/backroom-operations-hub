@@ -11,13 +11,24 @@ import Clients from "./pages/Clients";
 import Projects from "./pages/Projects";
 import ProjectProfile from "./pages/ProjectProfile";
 import Investors from "./pages/Investors";
+import InvestorContactsPage from "./pages/InvestorContactsPage";
+import OutreachPage from "./pages/OutreachPage";
 import Tasks from "./pages/Tasks";
 import DataRooms from "./pages/DataRooms";
 import DealDesk from "./pages/DealDesk";
 import Portfolio from "./pages/Portfolio";
+import TeamPage from "./pages/TeamPage";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: true,
+      staleTime: 15_000,
+    },
+  },
+});
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -45,10 +56,13 @@ const App = () => {
               <Route path="/projects" element={<Projects />} />
               <Route path="/projects/:id" element={<ProjectProfile />} />
               <Route path="/investors" element={<Investors />} />
+              <Route path="/investor-contacts" element={<InvestorContactsPage />} />
+              <Route path="/outreach" element={<OutreachPage />} />
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/data-rooms" element={<DataRooms />} />
               <Route path="/deal-desk" element={<DealDesk />} />
               <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/team" element={<TeamPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

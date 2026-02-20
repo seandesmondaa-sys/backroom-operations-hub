@@ -2,40 +2,31 @@ import { useParams, useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useProjects, useTasks, useDocuments, useTermSheets } from "@/hooks/use-airtable";
-import { stageColors } from "@/lib/mock-data";
+import { stageColors } from "@/lib/types";
 import { ArrowLeft, FileText, CheckSquare, Handshake, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 
 export default function ProjectProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: projects = [], isLoading: loadingProjects } = useProjects();
+  const { data: projects = [], isLoading } = useProjects();
   const { data: allTasks = [] } = useTasks();
   const { data: allDocs = [] } = useDocuments();
-  const { data: allTermSheets = [] } = useTermSheets();
+  const { data: allTS = [] } = useTermSheets();
+
+  if (isLoading) return <div className="p-6"><Skeleton className="h-96 w-full rounded-lg" /></div>;
 
   const project = projects.find((p) => p.id === id);
+  if (!project) return <div className="p-6"><p className="text-muted-foreground">Project not found.</p></div>;
 
-  if (loadingProjects) {
-    return <div className="p-6"><Skeleton className="h-96 w-full rounded-lg" /></div>;
-  }
-
-  if (!project) {
-    return <div className="p-6"><p className="text-muted-foreground">Project not found.</p></div>;
-  }
-
-  const projectTasks = allTasks.filter((t) => t.projectId === project.id);
-  const projectDocs = allDocs.filter((d) => d.projectId === project.id);
-  const projectTermSheets = allTermSheets.filter((ts) => ts.projectId === project.id);
+  // Filter linked records — check if Project linked field contains this record ID
+  const projectTasks = allTasks.filter((t) => Array.isArray(t.Project) ? t.Project.includes(project.id) : false);
+  const projectDocs = allDocs.filter((d) => Array.isArray(d.Project) ? d.Project.includes(project.id) : false);
+  const projectTS = allTS.filter((ts) => Array.isArray(ts.Project) ? ts.Project.includes(project.id) : false);
 
   return (
     <div>
@@ -45,13 +36,13 @@ export default function ProjectProfile() {
         </Button>
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-lg font-semibold">{project.name}</h1>
-            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium font-mono ${stageColors[project.stage] || ""}`}>
-              {project.stage}
+            <h1 className="text-lg font-semibold">{String(project.Name)}</h1>
+            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium font-mono ${stageColors[String(project.Stage)] || ""}`}>
+              {String(project.Stage)}
             </span>
           </div>
           <p className="text-sm text-muted-foreground">
-            {project.clientName} · {project.dealSize} · Lead: {project.lead}
+            {String(project["Deal Size"] || "")} · Lead: {String(project.Lead || "")}
           </p>
         </div>
       </div>
@@ -59,10 +50,10 @@ export default function ProjectProfile() {
       <div className="p-6 space-y-6">
         <div className="grid grid-cols-4 gap-4">
           {[
-            { label: "Deal Size", value: project.dealSize, icon: BarChart3 },
+            { label: "Deal Size", value: String(project["Deal Size"] || "—"), icon: BarChart3 },
             { label: "Tasks", value: projectTasks.length, icon: CheckSquare },
             { label: "Documents", value: projectDocs.length, icon: FileText },
-            { label: "Term Sheets", value: projectTermSheets.length, icon: Handshake },
+            { label: "Term Sheets", value: projectTS.length, icon: Handshake },
           ].map((kpi) => (
             <div key={kpi.label} className="rounded-lg border border-border bg-card p-4">
               <div className="flex items-center gap-2 mb-1">
@@ -74,6 +65,7 @@ export default function ProjectProfile() {
           ))}
         </div>
 
+        {/* Tasks */}
         <section>
           <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
             <CheckSquare className="h-4 w-4 text-muted-foreground" /> Tasks
@@ -90,25 +82,24 @@ export default function ProjectProfile() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {projectTasks.map((task) => (
-                  <TableRow key={task.id}>
-                    <TableCell className="text-sm">{task.title}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{task.assignee}</TableCell>
-                    <TableCell className="text-[11px] font-mono text-muted-foreground">{task.dueDate}</TableCell>
-                    <TableCell><StatusBadge status={task.priority} /></TableCell>
-                    <TableCell><StatusBadge status={task.status} /></TableCell>
+                {projectTasks.map((t) => (
+                  <TableRow key={t.id}>
+                    <TableCell className="text-sm">{String(t.Title || "")}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{String(t.Assignee || "")}</TableCell>
+                    <TableCell className="text-[11px] font-mono text-muted-foreground">{String(t["Due Date"] || "")}</TableCell>
+                    <TableCell><StatusBadge status={String(t.Priority || "")} /></TableCell>
+                    <TableCell><StatusBadge status={String(t.Status || "")} /></TableCell>
                   </TableRow>
                 ))}
                 {projectTasks.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-6">No tasks</TableCell>
-                  </TableRow>
+                  <TableRow><TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-6">No tasks</TableCell></TableRow>
                 )}
               </TableBody>
             </Table>
           </div>
         </section>
 
+        {/* Documents */}
         <section>
           <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
             <FileText className="h-4 w-4 text-muted-foreground" /> Data Room
@@ -125,26 +116,25 @@ export default function ProjectProfile() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {projectDocs.map((doc) => (
-                  <TableRow key={doc.id}>
-                    <TableCell className="text-sm font-medium font-mono">{doc.name}</TableCell>
-                    <TableCell className="text-[11px] font-mono text-muted-foreground">{doc.type}</TableCell>
-                    <TableCell className="text-sm font-mono">v{doc.version}</TableCell>
-                    <TableCell><StatusBadge status={doc.status} /></TableCell>
-                    <TableCell className="text-[11px] text-muted-foreground font-mono">{doc.uploadedAt}</TableCell>
+                {projectDocs.map((d) => (
+                  <TableRow key={d.id}>
+                    <TableCell className="text-sm font-medium font-mono">{String(d.Name || "")}</TableCell>
+                    <TableCell className="text-[11px] font-mono text-muted-foreground">{String(d.Type || "")}</TableCell>
+                    <TableCell className="text-sm font-mono">{String(d.Version || "")}</TableCell>
+                    <TableCell><StatusBadge status={String(d.Status || "")} /></TableCell>
+                    <TableCell className="text-[11px] text-muted-foreground font-mono">{String(d["Uploaded At"] || "")}</TableCell>
                   </TableRow>
                 ))}
                 {projectDocs.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-6">No documents</TableCell>
-                  </TableRow>
+                  <TableRow><TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-6">No documents</TableCell></TableRow>
                 )}
               </TableBody>
             </Table>
           </div>
         </section>
 
-        {projectTermSheets.length > 0 && (
+        {/* Term Sheets */}
+        {projectTS.length > 0 && (
           <section>
             <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
               <Handshake className="h-4 w-4 text-muted-foreground" /> Term Sheets
@@ -153,7 +143,6 @@ export default function ProjectProfile() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/50">
-                    <TableHead className="text-xs font-semibold">Investor</TableHead>
                     <TableHead className="text-xs font-semibold">Amount</TableHead>
                     <TableHead className="text-xs font-semibold">Terms</TableHead>
                     <TableHead className="text-xs font-semibold">Status</TableHead>
@@ -161,13 +150,12 @@ export default function ProjectProfile() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {projectTermSheets.map((ts) => (
+                  {projectTS.map((ts) => (
                     <TableRow key={ts.id}>
-                      <TableCell className="text-sm font-medium">{ts.investor}</TableCell>
-                      <TableCell className="font-mono text-sm font-semibold text-primary">{ts.amount}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{ts.terms}</TableCell>
-                      <TableCell><StatusBadge status={ts.status} /></TableCell>
-                      <TableCell className="text-[11px] font-mono text-muted-foreground">{ts.date}</TableCell>
+                      <TableCell className="font-mono text-sm font-semibold text-primary">{String(ts.Amount || "")}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{String(ts.Terms || "")}</TableCell>
+                      <TableCell><StatusBadge status={String(ts.Status || "")} /></TableCell>
+                      <TableCell className="text-[11px] font-mono text-muted-foreground">{String(ts.Date || "")}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
