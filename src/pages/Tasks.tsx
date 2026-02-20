@@ -1,8 +1,9 @@
-import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
-import { tasks } from "@/lib/mock-data";
+import { useTasks } from "@/hooks/use-airtable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { Task } from "@/lib/mock-data";
 import {
   Table,
   TableBody,
@@ -13,12 +14,13 @@ import {
 } from "@/components/ui/table";
 
 export default function Tasks() {
+  const { data: tasks = [], isLoading } = useTasks();
+
   const overdueTasks = tasks.filter((t) => t.status === "Overdue");
   const inProgressTasks = tasks.filter((t) => t.status === "In Progress");
   const todoTasks = tasks.filter((t) => t.status === "To Do");
-  const doneTasks = tasks.filter((t) => t.status === "Done");
 
-  const renderTable = (filteredTasks: typeof tasks) => (
+  const renderTable = (filteredTasks: Task[]) => (
     <div className="rounded-lg border border-border overflow-hidden">
       <Table>
         <TableHeader>
@@ -44,9 +46,7 @@ export default function Tasks() {
           ))}
           {filteredTasks.length === 0 && (
             <TableRow>
-              <TableCell colSpan={6} className="text-center text-sm text-muted-foreground py-8">
-                No tasks
-              </TableCell>
+              <TableCell colSpan={6} className="text-center text-sm text-muted-foreground py-8">No tasks</TableCell>
             </TableRow>
           )}
         </TableBody>
@@ -54,27 +54,26 @@ export default function Tasks() {
     </div>
   );
 
+  if (isLoading) {
+    return (
+      <div>
+        <PageHeader title="Tasks" description="Task manager across all projects" />
+        <div className="p-6"><Skeleton className="h-64 w-full rounded-lg" /></div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <PageHeader title="Tasks" description="Task manager across all projects" />
-
       <div className="p-6">
         <Tabs defaultValue="all">
           <TabsList className="mb-4">
-            <TabsTrigger value="all" className="text-xs">
-              All ({tasks.length})
-            </TabsTrigger>
-            <TabsTrigger value="overdue" className="text-xs">
-              Overdue ({overdueTasks.length})
-            </TabsTrigger>
-            <TabsTrigger value="in-progress" className="text-xs">
-              In Progress ({inProgressTasks.length})
-            </TabsTrigger>
-            <TabsTrigger value="todo" className="text-xs">
-              To Do ({todoTasks.length})
-            </TabsTrigger>
+            <TabsTrigger value="all" className="text-xs">All ({tasks.length})</TabsTrigger>
+            <TabsTrigger value="overdue" className="text-xs">Overdue ({overdueTasks.length})</TabsTrigger>
+            <TabsTrigger value="in-progress" className="text-xs">In Progress ({inProgressTasks.length})</TabsTrigger>
+            <TabsTrigger value="todo" className="text-xs">To Do ({todoTasks.length})</TabsTrigger>
           </TabsList>
-
           <TabsContent value="all">{renderTable(tasks)}</TabsContent>
           <TabsContent value="overdue">{renderTable(overdueTasks)}</TabsContent>
           <TabsContent value="in-progress">{renderTable(inProgressTasks)}</TabsContent>

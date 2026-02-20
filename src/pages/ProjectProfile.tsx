@@ -1,9 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
-import { projects, tasks, documents, termSheets, stageColors } from "@/lib/mock-data";
+import { useProjects, useTasks, useDocuments, useTermSheets } from "@/hooks/use-airtable";
+import { stageColors } from "@/lib/mock-data";
 import { ArrowLeft, FileText, CheckSquare, Handshake, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -16,19 +18,24 @@ import {
 export default function ProjectProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { data: projects = [], isLoading: loadingProjects } = useProjects();
+  const { data: allTasks = [] } = useTasks();
+  const { data: allDocs = [] } = useDocuments();
+  const { data: allTermSheets = [] } = useTermSheets();
+
   const project = projects.find((p) => p.id === id);
 
-  if (!project) {
-    return (
-      <div className="p-6">
-        <p className="text-muted-foreground">Project not found.</p>
-      </div>
-    );
+  if (loadingProjects) {
+    return <div className="p-6"><Skeleton className="h-96 w-full rounded-lg" /></div>;
   }
 
-  const projectTasks = tasks.filter((t) => t.projectId === project.id);
-  const projectDocs = documents.filter((d) => d.projectId === project.id);
-  const projectTermSheets = termSheets.filter((ts) => ts.projectId === project.id);
+  if (!project) {
+    return <div className="p-6"><p className="text-muted-foreground">Project not found.</p></div>;
+  }
+
+  const projectTasks = allTasks.filter((t) => t.projectId === project.id);
+  const projectDocs = allDocs.filter((d) => d.projectId === project.id);
+  const projectTermSheets = allTermSheets.filter((ts) => ts.projectId === project.id);
 
   return (
     <div>
@@ -39,7 +46,7 @@ export default function ProjectProfile() {
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <h1 className="text-lg font-semibold">{project.name}</h1>
-            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium font-mono ${stageColors[project.stage]}`}>
+            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium font-mono ${stageColors[project.stage] || ""}`}>
               {project.stage}
             </span>
           </div>
@@ -50,7 +57,6 @@ export default function ProjectProfile() {
       </div>
 
       <div className="p-6 space-y-6">
-        {/* KPIs */}
         <div className="grid grid-cols-4 gap-4">
           {[
             { label: "Deal Size", value: project.dealSize, icon: BarChart3 },
@@ -68,7 +74,6 @@ export default function ProjectProfile() {
           ))}
         </div>
 
-        {/* Tasks */}
         <section>
           <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
             <CheckSquare className="h-4 w-4 text-muted-foreground" /> Tasks
@@ -104,7 +109,6 @@ export default function ProjectProfile() {
           </div>
         </section>
 
-        {/* Documents */}
         <section>
           <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
             <FileText className="h-4 w-4 text-muted-foreground" /> Data Room
@@ -140,7 +144,6 @@ export default function ProjectProfile() {
           </div>
         </section>
 
-        {/* Term Sheets */}
         {projectTermSheets.length > 0 && (
           <section>
             <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
