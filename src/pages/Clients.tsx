@@ -1,6 +1,6 @@
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
-import { clients } from "@/lib/mock-data";
+import { useClients } from "@/hooks/use-airtable";
 import {
   Table,
   TableBody,
@@ -11,8 +11,11 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Clients() {
+  const { data: clients = [], isLoading } = useClients();
+
   return (
     <div>
       <PageHeader title="Clients" description="Sponsors and client organizations">
@@ -23,43 +26,47 @@ export default function Clients() {
       </PageHeader>
 
       <div className="p-6">
-        <div className="rounded-lg border border-border overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50">
-                <TableHead className="text-xs font-semibold">Name</TableHead>
-                <TableHead className="text-xs font-semibold">Type</TableHead>
-                <TableHead className="text-xs font-semibold">Industry</TableHead>
-                <TableHead className="text-xs font-semibold">Contact</TableHead>
-                <TableHead className="text-xs font-semibold">Projects</TableHead>
-                <TableHead className="text-xs font-semibold">Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {clients.map((client) => (
-                <TableRow key={client.id} className="hover:bg-muted/30 cursor-pointer">
-                  <TableCell className="text-sm font-medium">{client.name}</TableCell>
-                  <TableCell>
-                    <span className="text-[11px] font-mono text-muted-foreground">{client.type}</span>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{client.industry}</TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="text-sm">{client.contactName}</p>
-                      <p className="text-[11px] text-muted-foreground">{client.contactEmail}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-mono text-sm">{client.projectCount}</span>
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={client.status} />
-                  </TableCell>
+        {isLoading ? (
+          <Skeleton className="h-64 w-full rounded-lg" />
+        ) : (
+          <div className="rounded-lg border border-border overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="text-xs font-semibold">Name</TableHead>
+                  <TableHead className="text-xs font-semibold">Type</TableHead>
+                  <TableHead className="text-xs font-semibold">Industry</TableHead>
+                  <TableHead className="text-xs font-semibold">Contact</TableHead>
+                  <TableHead className="text-xs font-semibold">Projects</TableHead>
+                  <TableHead className="text-xs font-semibold">Status</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+              </TableHeader>
+              <TableBody>
+                {clients.map((client) => (
+                  <TableRow key={client.id} className="hover:bg-muted/30 cursor-pointer">
+                    <TableCell className="text-sm font-medium">{client.name}</TableCell>
+                    <TableCell>
+                      <span className="text-[11px] font-mono text-muted-foreground">{client.type}</span>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{client.industry}</TableCell>
+                    <TableCell>
+                      <div>
+                        <p className="text-sm">{client.contactName}</p>
+                        <p className="text-[11px] text-muted-foreground">{client.contactEmail}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-mono text-sm">{client.projectCount}</span>
+                    </TableCell>
+                    <TableCell>
+                      <StatusBadge status={client.status} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </div>
     </div>
   );
