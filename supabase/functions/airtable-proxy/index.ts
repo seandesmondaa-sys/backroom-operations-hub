@@ -12,11 +12,12 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const apiKey = Deno.env.get('AIRTABLE_API_KEY');
+  // Support both AIRTABLE_TOKEN and AIRTABLE_API_KEY
+  const apiKey = Deno.env.get('AIRTABLE_TOKEN') || Deno.env.get('AIRTABLE_API_KEY');
   const baseId = Deno.env.get('AIRTABLE_BASE_ID');
 
   if (!apiKey) {
-    return new Response(JSON.stringify({ error: 'AIRTABLE_API_KEY not configured' }), {
+    return new Response(JSON.stringify({ error: 'AIRTABLE_TOKEN or AIRTABLE_API_KEY not configured' }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
@@ -32,9 +33,18 @@ Deno.serve(async (req) => {
     const recordId = url.searchParams.get('recordId');
     const view = url.searchParams.get('view');
     const filterFormula = url.searchParams.get('filterByFormula');
-    const sortField = url.searchParams.get('sortField');
-    const sortDirection = url.searchParams.get('sortDirection') || 'asc';
+    const maxRecords = url.searchParams.get('maxRecords');
     const offset = url.searchParams.get('offset');
+
+    // Support multiple sort fields: sortField0, sortDirection0, sortField1, ...
+    const sorts: { field: string; direction: string }[] = [];
+    for (let i = 0; i < 5; i++) {
+      const sf = url.searchParams.get(`sortField${i}`) || (i === 0 ? url.searchParams.get('sortField') : null);
+      if (sf) {
+        const sd = url.searchParams.get(`sortDirection${i}`) || url.searchParams.get('sortDirection') || 'asc';
+        sorts.push({ field: sf, direction: sd });
+      }
+    }
 
     if (!table) {
       return new Response(JSON.stringify({ error: 'Missing "table" query parameter' }), {
@@ -52,15 +62,16 @@ Deno.serve(async (req) => {
       airtableUrl += `/${recordId}`;
     }
 
-    // Build query params for GET (list)
+    // Build query params for GET list
     if (req.method === 'GET' && !recordId) {
       const params = new URLSearchParams();
       if (view) params.set('view', view);
       if (filterFormula) params.set('filterByFormula', filterFormula);
-      if (sortField) {
-        params.set('sort[0][field]', sortField);
-        params.set('sort[0][direction]', sortDirection);
-      }
+      if (maxRecords) params.set('maxRecords', maxRecords);
+      sorts.forEach((s, i) => {
+        params.set(`sort[${i}][field]`, s.field);
+        params.set(`sort[${i}][direction]`, s.direction);
+      });
       if (offset) params.set('offset', offset);
       const qs = params.toString();
       if (qs) airtableUrl += `?${qs}`;
@@ -80,7 +91,8 @@ Deno.serve(async (req) => {
     const data = await airtableRes.json();
 
     if (!airtableRes.ok) {
-      return new Response(JSON.stringify({ error: 'Airtable API error', details: data }), {
+      console.error('Airtable error:', JSON.stringify(data));
+      return new Response(JSON.stringify({ error: 'Airtable API error', details: data, status: airtableRes.status }), {
         status: airtableRes.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
@@ -90,6 +102,7 @@ Deno.serve(async (req) => {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error('Proxy error:', message);
     return new Response(JSON.stringify({ error: message }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

@@ -8,19 +8,27 @@ import {
   Handshake,
   BarChart3,
   LogOut,
+  Mail,
+  Contact,
+  UsersRound,
+  Activity,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
+import { SyncStatus } from "@/components/SyncStatus";
 
 const navItems = [
   { title: "Pipeline", url: "/", icon: FolderKanban },
   { title: "Clients", url: "/clients", icon: Users },
   { title: "Projects", url: "/projects", icon: LayoutDashboard },
   { title: "Investors", url: "/investors", icon: UserCheck },
+  { title: "Contacts", url: "/investor-contacts", icon: Contact },
+  { title: "Outreach", url: "/outreach", icon: Mail },
   { title: "Tasks", url: "/tasks", icon: CheckSquare },
   { title: "Data Rooms", url: "/data-rooms", icon: FileText },
   { title: "Deal Desk", url: "/deal-desk", icon: Handshake },
-  { title: "Portfolio", url: "/portfolio", icon: BarChart3 },
+  { title: "KPIs", url: "/portfolio", icon: Activity },
+  { title: "Team", url: "/team", icon: UsersRound },
 ];
 
 export function AppSidebar({ onLogout }: { onLogout: () => void }) {
@@ -35,9 +43,9 @@ export function AppSidebar({ onLogout }: { onLogout: () => void }) {
         <p className="text-[11px] text-sidebar-muted mt-0.5">Backroom CRM</p>
       </div>
 
-      <nav className="flex-1 px-3 py-4 space-y-0.5">
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.url || 
+          const isActive = location.pathname === item.url ||
             (item.url !== "/" && location.pathname.startsWith(item.url));
           return (
             <NavLink
@@ -45,9 +53,7 @@ export function AppSidebar({ onLogout }: { onLogout: () => void }) {
               to={item.url}
               end={item.url === "/"}
               className={`flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${
-                isActive
-                  ? ""
-                  : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                isActive ? "" : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               }`}
               activeClassName="bg-sidebar-accent text-sidebar-primary"
             >
@@ -58,7 +64,8 @@ export function AppSidebar({ onLogout }: { onLogout: () => void }) {
         })}
       </nav>
 
-      <div className="px-3 py-4 border-t border-sidebar-border">
+      <div className="px-3 py-3 border-t border-sidebar-border space-y-2">
+        <SyncStatus />
         <button
           onClick={onLogout}
           className="flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium text-sidebar-foreground hover:bg-sidebar-accent hover:text-destructive transition-colors w-full"
