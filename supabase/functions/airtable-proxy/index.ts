@@ -1,5 +1,3 @@
-/// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
@@ -7,14 +5,15 @@ const corsHeaders = {
 
 const AIRTABLE_BASE = 'https://api.airtable.com/v0';
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Support both AIRTABLE_TOKEN and AIRTABLE_API_KEY
   const apiKey = Deno.env.get('AIRTABLE_TOKEN') || Deno.env.get('AIRTABLE_API_KEY');
   const baseId = Deno.env.get('AIRTABLE_BASE_ID');
+
+  console.log('airtable-proxy called, baseId:', baseId?.substring(0, 6), 'hasKey:', !!apiKey);
 
   if (!apiKey) {
     return new Response(JSON.stringify({ error: 'AIRTABLE_TOKEN or AIRTABLE_API_KEY not configured' }), {
@@ -36,7 +35,6 @@ Deno.serve(async (req) => {
     const maxRecords = url.searchParams.get('maxRecords');
     const offset = url.searchParams.get('offset');
 
-    // Support multiple sort fields: sortField0, sortDirection0, sortField1, ...
     const sorts: { field: string; direction: string }[] = [];
     for (let i = 0; i < 5; i++) {
       const sf = url.searchParams.get(`sortField${i}`) || (i === 0 ? url.searchParams.get('sortField') : null);
@@ -62,7 +60,6 @@ Deno.serve(async (req) => {
       airtableUrl += `/${recordId}`;
     }
 
-    // Build query params for GET list
     if (req.method === 'GET' && !recordId) {
       const params = new URLSearchParams();
       if (view) params.set('view', view);
@@ -81,6 +78,8 @@ Deno.serve(async (req) => {
     if (req.method === 'POST' || req.method === 'PATCH' || req.method === 'PUT') {
       body = await req.text();
     }
+
+    console.log('Fetching:', airtableUrl);
 
     const airtableRes = await fetch(airtableUrl, {
       method: req.method === 'PUT' ? 'PATCH' : req.method,
