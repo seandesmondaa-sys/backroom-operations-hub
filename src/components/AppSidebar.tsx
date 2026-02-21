@@ -12,7 +12,9 @@ import {
   Contact,
   UsersRound,
   Activity,
+  MessageSquare,
 } from "lucide-react";
+import { NotificationBell } from "@/components/NotificationBell";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { SyncStatus } from "@/components/SyncStatus";
@@ -28,6 +30,7 @@ const navItems = [
   { title: "Tasks", url: "/tasks", icon: CheckSquare },
   { title: "Data Rooms", url: "/data-rooms", icon: FileText },
   { title: "Deal Desk", url: "/deal-desk", icon: Handshake },
+  { title: "Messages", url: "/messages", icon: MessageSquare },
   { title: "KPIs", url: "/portfolio", icon: Activity },
   { title: "Team", url: "/team", icon: UsersRound },
 ];
@@ -69,7 +72,10 @@ export function AppSidebar({ onLogout }: { onLogout: () => void }) {
       </nav>
 
       <div className="px-3 py-3 border-t border-sidebar-border space-y-2">
-        <SyncStatus />
+        <div className="flex items-center justify-between px-1">
+          <SyncStatus />
+          <NotificationBell />
+        </div>
         <button
           onClick={onLogout}
           className="flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium text-sidebar-foreground hover:bg-sidebar-accent hover:text-destructive transition-colors w-full"
