@@ -3,20 +3,31 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MessageSquare, X, Send, Bot, User, Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { MessageSquare, X, Send, Bot, User, Loader2, Database } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
 
+const QUICK_PROMPTS = [
+  { label: "Pipeline summary", prompt: "Give me a summary of the current deal pipeline — stages, sizes, and any bottlenecks." },
+  { label: "Overdue tasks", prompt: "Which tasks are overdue or due soon? List them by priority." },
+  { label: "Investor overview", prompt: "Summarize our investor relationships — who are our top investors and recent outreach activity?" },
+  { label: "Draft follow-up", prompt: "Draft a professional follow-up email for a deal in the Due Diligence stage." },
+];
+
 async function streamChat({
   messages,
+  includeCrmData,
   onDelta,
   onDone,
   onError,
 }: {
   messages: Msg[];
+  includeCrmData: boolean;
   onDelta: (text: string) => void;
   onDone: () => void;
   onError: (err: string) => void;
@@ -27,7 +38,7 @@ async function streamChat({
       "Content-Type": "application/json",
       Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
     },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ messages, includeCrmData }),
   });
 
   if (!resp.ok) {
@@ -103,8 +114,8 @@ export function AiChatPanel() {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [includeCrmData, setIncludeCrmData] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
@@ -117,11 +128,10 @@ export function AiChatPanel() {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  const send = async () => {
-    const text = input.trim();
-    if (!text || isLoading) return;
+  const sendMessage = async (text: string) => {
+    if (!text.trim() || isLoading) return;
 
-    const userMsg: Msg = { role: "user", content: text };
+    const userMsg: Msg = { role: "user", content: text.trim() };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsLoading(true);
@@ -143,21 +153,16 @@ export function AiChatPanel() {
     try {
       await streamChat({
         messages: [...messages, userMsg],
+        includeCrmData,
         onDelta: upsertAssistant,
         onDone: () => setIsLoading(false),
         onError: (err) => {
-          setMessages((prev) => [
-            ...prev,
-            { role: "assistant", content: `⚠️ ${err}` },
-          ]);
+          setMessages((prev) => [...prev, { role: "assistant", content: `⚠️ ${err}` }]);
           setIsLoading(false);
         },
       });
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "⚠️ Failed to connect to AI service." },
-      ]);
+      setMessages((prev) => [...prev, { role: "assistant", content: "⚠️ Failed to connect to AI service." }]);
       setIsLoading(false);
     }
   };
@@ -165,7 +170,7 @@ export function AiChatPanel() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      send();
+      sendMessage(input);
     }
   };
 
@@ -182,31 +187,65 @@ export function AiChatPanel() {
   }
 
   return (
-    <Card className="fixed bottom-6 right-6 z-50 w-[400px] h-[560px] flex flex-col shadow-2xl border-border/50 overflow-hidden">
+    <Card className="fixed bottom-6 right-6 z-50 w-[420px] h-[600px] flex flex-col shadow-2xl border-border/50 overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b bg-primary text-primary-foreground">
         <div className="flex items-center gap-2">
           <Bot className="h-5 w-5" />
           <span className="font-semibold text-sm">OpsDesk AI</span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7 text-primary-foreground hover:bg-primary-foreground/20"
-          onClick={() => setOpen(false)}
-        >
-          <X className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <Database className="h-3.5 w-3.5 opacity-70" />
+            <Switch
+              checked={includeCrmData}
+              onCheckedChange={setIncludeCrmData}
+              className="scale-75 data-[state=checked]:bg-primary-foreground/30"
+            />
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-primary-foreground hover:bg-primary-foreground/20"
+            onClick={() => setOpen(false)}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
+
+      {/* CRM data indicator */}
+      {includeCrmData && (
+        <div className="px-4 py-1.5 bg-primary/5 border-b text-xs text-muted-foreground flex items-center gap-1.5">
+          <Database className="h-3 w-3" />
+          Live CRM data enabled — AI will analyze your Airtable records
+        </div>
+      )}
 
       {/* Messages */}
       <ScrollArea ref={scrollRef} className="flex-1 p-4">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground gap-3 py-12">
+          <div className="flex flex-col items-center justify-center text-center text-muted-foreground gap-4 py-8">
             <Bot className="h-10 w-10 opacity-40" />
             <div>
               <p className="font-medium text-sm">Hi! I'm OpsDesk AI</p>
-              <p className="text-xs mt-1">Ask me about your deals, tasks, outreach, or anything CRM-related.</p>
+              <p className="text-xs mt-1 mb-4">
+                {includeCrmData
+                  ? "I have access to your live CRM data. Try one of these:"
+                  : "Ask me anything about CRM workflows and best practices."}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2 w-full">
+              {QUICK_PROMPTS.map((qp) => (
+                <button
+                  key={qp.label}
+                  onClick={() => sendMessage(qp.prompt)}
+                  disabled={isLoading}
+                  className="text-left text-xs px-3 py-2 rounded-lg border bg-card hover:bg-accent hover:text-accent-foreground transition-colors"
+                >
+                  {qp.label}
+                </button>
+              ))}
             </div>
           </div>
         )}
@@ -260,7 +299,6 @@ export function AiChatPanel() {
       <div className="p-3 border-t bg-card">
         <div className="flex gap-2">
           <Textarea
-            ref={textareaRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -270,7 +308,7 @@ export function AiChatPanel() {
           />
           <Button
             size="icon"
-            onClick={send}
+            onClick={() => sendMessage(input)}
             disabled={!input.trim() || isLoading}
             className="shrink-0 h-10 w-10"
           >
