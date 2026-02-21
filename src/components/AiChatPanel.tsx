@@ -192,7 +192,7 @@ export function AiChatPanel() {
       <div className="flex items-center justify-between px-4 py-3 border-b bg-primary text-primary-foreground">
         <div className="flex items-center gap-2">
           <Bot className="h-5 w-5" />
-          <span className="font-semibold text-sm">OpsDesk AI</span>
+          <span className="font-semibold text-sm">AC CRM AI</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
@@ -228,7 +228,7 @@ export function AiChatPanel() {
           <div className="flex flex-col items-center justify-center text-center text-muted-foreground gap-4 py-8">
             <Bot className="h-10 w-10 opacity-40" />
             <div>
-              <p className="font-medium text-sm">Hi! I'm OpsDesk AI</p>
+              <p className="font-medium text-sm">Hi! I'm AC CRM AI</p>
               <p className="text-xs mt-1 mb-4">
                 {includeCrmData
                   ? "I have access to your live CRM data. Try one of these:"

@@ -16,6 +16,7 @@ import {
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { SyncStatus } from "@/components/SyncStatus";
+import acLogo from "@/assets/logo.jpg";
 
 const navItems = [
   { title: "Pipeline", url: "/", icon: FolderKanban },
@@ -36,11 +37,14 @@ export function AppSidebar({ onLogout }: { onLogout: () => void }) {
 
   return (
     <aside className="flex flex-col w-56 min-h-screen bg-sidebar border-r border-sidebar-border shrink-0">
-      <div className="px-5 py-5 border-b border-sidebar-border">
-        <h1 className="text-sm font-bold tracking-wider text-sidebar-primary uppercase font-mono">
-          OpsDesk
-        </h1>
-        <p className="text-[11px] text-sidebar-muted mt-0.5">Backroom CRM</p>
+      <div className="px-5 py-4 border-b border-sidebar-border flex items-center gap-3">
+        <img src={acLogo} alt="AC CRM" className="h-8 w-8 rounded" />
+        <div>
+          <h1 className="text-sm font-bold tracking-wider text-sidebar-primary uppercase font-mono">
+            AC CRM
+          </h1>
+          <p className="text-[11px] text-sidebar-muted mt-0.5">Auxilium Consults</p>
+        </div>
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import acLogo from "@/assets/logo.jpg";
 
 export default function Login({ onLogin }: { onLogin: () => void }) {
   const [email, setEmail] = useState("");
@@ -15,11 +16,12 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-sidebar">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 flex flex-col items-center">
+          <img src={acLogo} alt="AC CRM" className="h-16 w-16 rounded-lg mb-3" />
           <h1 className="text-xl font-bold tracking-wider text-sidebar-primary uppercase font-mono">
-            OpsDesk
+            AC CRM
           </h1>
-          <p className="text-sm text-sidebar-muted mt-1">Backroom Operations CRM</p>
+          <p className="text-sm text-sidebar-muted mt-1">Auxilium Consults</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-card rounded-lg border border-border p-6 space-y-4 shadow-lg">
