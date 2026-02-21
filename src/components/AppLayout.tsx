@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/AppSidebar";
+import { AiChatPanel } from "@/components/AiChatPanel";
 import { Outlet } from "react-router-dom";
 
 export function AppLayout({ onLogout }: { onLogout: () => void }) {
@@ -8,6 +9,7 @@ export function AppLayout({ onLogout }: { onLogout: () => void }) {
       <main className="flex-1 overflow-auto">
         <Outlet />
       </main>
+      <AiChatPanel />
     </div>
   );
 }
