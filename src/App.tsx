@@ -24,6 +24,7 @@ import WorkflowTasksPage from "./pages/WorkflowTasksPage";
 import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 import CalendarPage from "./pages/CalendarPage";
 import HRModulePage from "./pages/HRModulePage";
+import FinancePage from "./pages/FinancePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -75,6 +76,7 @@ function AppRoutes() {
           <Route path="/dashboard" element={<ExecutiveDashboard />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/hr" element={<HRModulePage />} />
+          <Route path="/finance" element={<FinancePage />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

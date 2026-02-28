@@ -17,6 +17,7 @@ import {
   Gauge,
   CalendarDays,
   HeartPulse,
+  Banknote,
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
 import { NavLink } from "@/components/NavLink";
@@ -64,6 +65,7 @@ export function AppSidebar({ onLogout }: { onLogout: () => void }) {
     { label: "Insights", items: insightItems },
     { label: "Departments", items: [
       { title: "HR", url: "/hr", icon: HeartPulse },
+      { title: "Finance", url: "/finance", icon: Banknote },
     ]},
   ];
 

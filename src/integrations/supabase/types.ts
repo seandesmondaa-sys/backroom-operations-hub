@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      budgets: {
+        Row: {
+          allocated_amount: number
+          category: Database["public"]["Enums"]["budget_category"]
+          created_at: string
+          created_by: string
+          department_id: string | null
+          fiscal_year: string
+          id: string
+          name: string
+          notes: string | null
+          project_id: string | null
+          spent_amount: number
+          updated_at: string
+        }
+        Insert: {
+          allocated_amount?: number
+          category?: Database["public"]["Enums"]["budget_category"]
+          created_at?: string
+          created_by: string
+          department_id?: string | null
+          fiscal_year?: string
+          id?: string
+          name: string
+          notes?: string | null
+          project_id?: string | null
+          spent_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          allocated_amount?: number
+          category?: Database["public"]["Enums"]["budget_category"]
+          created_at?: string
+          created_by?: string
+          department_id?: string | null
+          fiscal_year?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          project_id?: string | null
+          spent_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budgets_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       departments: {
         Row: {
           created_at: string
@@ -37,6 +90,68 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      expenses: {
+        Row: {
+          amount: number
+          approved_at: string | null
+          approved_by: string | null
+          budget_id: string | null
+          category: Database["public"]["Enums"]["budget_category"]
+          created_at: string
+          description: string
+          expense_date: string
+          id: string
+          notes: string | null
+          receipt_url: string | null
+          status: Database["public"]["Enums"]["expense_status"]
+          submitted_by: string
+          updated_at: string
+          vendor: string | null
+        }
+        Insert: {
+          amount: number
+          approved_at?: string | null
+          approved_by?: string | null
+          budget_id?: string | null
+          category?: Database["public"]["Enums"]["budget_category"]
+          created_at?: string
+          description: string
+          expense_date?: string
+          id?: string
+          notes?: string | null
+          receipt_url?: string | null
+          status?: Database["public"]["Enums"]["expense_status"]
+          submitted_by: string
+          updated_at?: string
+          vendor?: string | null
+        }
+        Update: {
+          amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
+          budget_id?: string | null
+          category?: Database["public"]["Enums"]["budget_category"]
+          created_at?: string
+          description?: string
+          expense_date?: string
+          id?: string
+          notes?: string | null
+          receipt_url?: string | null
+          status?: Database["public"]["Enums"]["expense_status"]
+          submitted_by?: string
+          updated_at?: string
+          vendor?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       hr_leave_requests: {
         Row: {
@@ -152,6 +267,54 @@ export type Database = {
           strengths?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      invoices: {
+        Row: {
+          amount: number
+          client_name: string
+          created_at: string
+          created_by: string
+          description: string | null
+          due_date: string
+          id: string
+          invoice_number: string
+          issue_date: string
+          paid_date: string | null
+          project_id: string | null
+          status: Database["public"]["Enums"]["invoice_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          client_name: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_date: string
+          id?: string
+          invoice_number: string
+          issue_date?: string
+          paid_date?: string | null
+          project_id?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          client_name?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_date?: string
+          id?: string
+          invoice_number?: string
+          issue_date?: string
+          paid_date?: string | null
+          project_id?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          updated_at?: string
         }
         Relationships: []
       }
@@ -460,6 +623,42 @@ export type Database = {
         }
         Relationships: []
       }
+      revenue_entries: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          project_id: string | null
+          recorded_by: string
+          revenue_date: string
+          source: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          project_id?: string | null
+          recorded_by: string
+          revenue_date?: string
+          source: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          project_id?: string | null
+          recorded_by?: string
+          revenue_date?: string
+          source?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       thread_participants: {
         Row: {
           id: string
@@ -542,7 +741,17 @@ export type Database = {
         | "department_head"
         | "department_staff"
         | "general_staff"
+      budget_category:
+        | "operational"
+        | "marketing"
+        | "staffing"
+        | "legal"
+        | "technology"
+        | "travel"
+        | "other"
       event_type: "meeting" | "follow_up" | "deadline" | "reminder" | "other"
+      expense_status: "pending" | "approved" | "rejected" | "paid"
+      invoice_status: "draft" | "sent" | "paid" | "overdue" | "cancelled"
       leave_status: "pending" | "approved" | "rejected" | "cancelled"
       leave_type:
         | "annual"
@@ -688,7 +897,18 @@ export const Constants = {
         "department_staff",
         "general_staff",
       ],
+      budget_category: [
+        "operational",
+        "marketing",
+        "staffing",
+        "legal",
+        "technology",
+        "travel",
+        "other",
+      ],
       event_type: ["meeting", "follow_up", "deadline", "reminder", "other"],
+      expense_status: ["pending", "approved", "rejected", "paid"],
+      invoice_status: ["draft", "sent", "paid", "overdue", "cancelled"],
       leave_status: ["pending", "approved", "rejected", "cancelled"],
       leave_type: [
         "annual",
