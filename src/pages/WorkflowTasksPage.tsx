@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { useAuth } from "@/hooks/use-auth";
+import { useAllUserRoles } from "@/hooks/use-roles";
 import {
   useOSTasks, useCreateOSTask, useUpdateOSTask, useDeleteOSTask, useBatchUpdateTasks,
   type OSTask, type TaskStatus, type TaskPriority, type RecurrenceType,
@@ -36,12 +37,14 @@ function TaskFormDialog({
   onSubmit: (t: Partial<OSTask>) => void;
   isPending: boolean;
 }) {
+  const { data: teamMembers = [] } = useAllUserRoles();
   const [title, setTitle] = useState(initial?.title || "");
   const [description, setDescription] = useState(initial?.description || "");
   const [status, setStatus] = useState<TaskStatus>(initial?.status || "todo");
   const [priority, setPriority] = useState<TaskPriority>(initial?.priority || "medium");
   const [dueDate, setDueDate] = useState<Date | undefined>(initial?.due_date ? new Date(initial.due_date) : undefined);
   const [recurrence, setRecurrence] = useState<RecurrenceType>(initial?.recurrence || "none");
+  const [assigneeId, setAssigneeId] = useState<string>(initial?.assignee_id || "unassigned");
 
   const handleSubmit = () => {
     if (!title.trim()) return;
@@ -51,6 +54,7 @@ function TaskFormDialog({
       description: description || null,
       status,
       priority,
+      assignee_id: assigneeId === "unassigned" ? null : assigneeId,
       due_date: dueDate?.toISOString() ?? null,
       recurrence,
     });
@@ -100,6 +104,17 @@ function TaskFormDialog({
               </SelectContent>
             </Select>
           </div>
+          <Select value={assigneeId} onValueChange={setAssigneeId}>
+            <SelectTrigger className="h-8 text-xs">
+              <SelectValue placeholder="Assign to…" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="unassigned" className="text-xs">Unassigned</SelectItem>
+              {teamMembers.map((m) => (
+                <SelectItem key={m.user_id} value={m.user_id} className="text-xs">{m.display_name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button onClick={handleSubmit} disabled={isPending || !title.trim()} className="w-full h-8 text-xs">
             {initial?.id ? "Save Changes" : "Create Task"}
           </Button>
