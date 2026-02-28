@@ -14,6 +14,7 @@ import {
   MessageSquare,
   Shield,
   Workflow,
+  Gauge,
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
 import { NavLink } from "@/components/NavLink";
@@ -45,6 +46,7 @@ const opsItems = [
 ];
 
 const insightItems = [
+  { title: "Dashboard", url: "/dashboard", icon: Gauge },
   { title: "KPIs", url: "/portfolio", icon: Activity },
   { title: "Team", url: "/team", icon: UsersRound },
 ];
