@@ -19,6 +19,7 @@ import DealDesk from "./pages/DealDesk";
 import Portfolio from "./pages/Portfolio";
 import TeamPage from "./pages/TeamPage";
 import MessagesPage from "./pages/MessagesPage";
+import AdminRolesPage from "./pages/AdminRolesPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -65,6 +66,7 @@ function AppRoutes() {
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/admin/roles" element={<AdminRolesPage />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
