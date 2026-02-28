@@ -15,6 +15,7 @@ import {
   Shield,
   Workflow,
   Gauge,
+  CalendarDays,
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
 import { NavLink } from "@/components/NavLink";
@@ -42,6 +43,7 @@ const crmItems = [
 
 const opsItems = [
   { title: "Workflow", url: "/workflow", icon: Workflow },
+  { title: "Calendar", url: "/calendar", icon: CalendarDays },
   { title: "Messages", url: "/messages", icon: MessageSquare },
 ];
 
