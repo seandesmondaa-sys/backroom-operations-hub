@@ -13,6 +13,7 @@ import {
   Activity,
   MessageSquare,
   Shield,
+  Workflow,
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
 import { NavLink } from "@/components/NavLink";
@@ -38,7 +39,8 @@ const crmItems = [
   { title: "Deal Desk", url: "/deal-desk", icon: Handshake },
 ];
 
-const commItems = [
+const opsItems = [
+  { title: "Workflow", url: "/workflow", icon: Workflow },
   { title: "Messages", url: "/messages", icon: MessageSquare },
 ];
 
@@ -53,7 +55,7 @@ export function AppSidebar({ onLogout }: { onLogout: () => void }) {
 
   const sections: NavSection[] = [
     { label: "CRM", items: crmItems },
-    { label: "Communication", items: commItems },
+    { label: "Operations", items: opsItems },
     { label: "Insights", items: insightItems },
   ];
 

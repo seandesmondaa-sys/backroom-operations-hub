@@ -144,6 +144,81 @@ export type Database = {
           },
         ]
       }
+      os_tasks: {
+        Row: {
+          assignee_id: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          department_id: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          parent_id: string | null
+          priority: Database["public"]["Enums"]["task_priority"]
+          project_id: string | null
+          recurrence: Database["public"]["Enums"]["recurrence_type"]
+          recurrence_next: string | null
+          sort_order: number
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          department_id?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          parent_id?: string | null
+          priority?: Database["public"]["Enums"]["task_priority"]
+          project_id?: string | null
+          recurrence?: Database["public"]["Enums"]["recurrence_type"]
+          recurrence_next?: string | null
+          sort_order?: number
+          status?: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          department_id?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          parent_id?: string | null
+          priority?: Database["public"]["Enums"]["task_priority"]
+          project_id?: string | null
+          recurrence?: Database["public"]["Enums"]["recurrence_type"]
+          recurrence_next?: string | null
+          sort_order?: number
+          status?: Database["public"]["Enums"]["task_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "os_tasks_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "os_tasks_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "os_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -256,6 +331,9 @@ export type Database = {
         | "department_head"
         | "department_staff"
         | "general_staff"
+      recurrence_type: "none" | "daily" | "weekly" | "biweekly" | "monthly"
+      task_priority: "urgent" | "high" | "medium" | "low"
+      task_status: "backlog" | "todo" | "in_progress" | "waiting" | "done"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -389,6 +467,9 @@ export const Constants = {
         "department_staff",
         "general_staff",
       ],
+      recurrence_type: ["none", "daily", "weekly", "biweekly", "monthly"],
+      task_priority: ["urgent", "high", "medium", "low"],
+      task_status: ["backlog", "todo", "in_progress", "waiting", "done"],
     },
   },
 } as const

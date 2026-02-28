@@ -20,6 +20,7 @@ import Portfolio from "./pages/Portfolio";
 import TeamPage from "./pages/TeamPage";
 import MessagesPage from "./pages/MessagesPage";
 import AdminRolesPage from "./pages/AdminRolesPage";
+import WorkflowTasksPage from "./pages/WorkflowTasksPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -67,6 +68,7 @@ function AppRoutes() {
           <Route path="/team" element={<TeamPage />} />
           <Route path="/messages" element={<MessagesPage />} />
           <Route path="/admin/roles" element={<AdminRolesPage />} />
+          <Route path="/workflow" element={<WorkflowTasksPage />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
