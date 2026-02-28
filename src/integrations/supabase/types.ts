@@ -144,6 +144,100 @@ export type Database = {
           },
         ]
       }
+      os_event_attendees: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "os_event_attendees_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "os_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      os_events: {
+        Row: {
+          all_day: boolean
+          color: string | null
+          created_at: string
+          created_by: string
+          department_id: string | null
+          description: string | null
+          end_time: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id: string
+          is_global: boolean
+          location: string | null
+          project_id: string | null
+          start_time: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          all_day?: boolean
+          color?: string | null
+          created_at?: string
+          created_by: string
+          department_id?: string | null
+          description?: string | null
+          end_time: string
+          event_type?: Database["public"]["Enums"]["event_type"]
+          id?: string
+          is_global?: boolean
+          location?: string | null
+          project_id?: string | null
+          start_time: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          all_day?: boolean
+          color?: string | null
+          created_at?: string
+          created_by?: string
+          department_id?: string | null
+          description?: string | null
+          end_time?: string
+          event_type?: Database["public"]["Enums"]["event_type"]
+          id?: string
+          is_global?: boolean
+          location?: string | null
+          project_id?: string | null
+          start_time?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "os_events_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       os_tasks: {
         Row: {
           assignee_id: string | null
@@ -331,6 +425,7 @@ export type Database = {
         | "department_head"
         | "department_staff"
         | "general_staff"
+      event_type: "meeting" | "follow_up" | "deadline" | "reminder" | "other"
       recurrence_type: "none" | "daily" | "weekly" | "biweekly" | "monthly"
       task_priority: "urgent" | "high" | "medium" | "low"
       task_status: "backlog" | "todo" | "in_progress" | "waiting" | "done"
@@ -467,6 +562,7 @@ export const Constants = {
         "department_staff",
         "general_staff",
       ],
+      event_type: ["meeting", "follow_up", "deadline", "reminder", "other"],
       recurrence_type: ["none", "daily", "weekly", "biweekly", "monthly"],
       task_priority: ["urgent", "high", "medium", "low"],
       task_status: ["backlog", "todo", "in_progress", "waiting", "done"],
