@@ -14,6 +14,116 @@ export type Database = {
   }
   public: {
     Tables: {
+      approval_requests: {
+        Row: {
+          approval_type: Database["public"]["Enums"]["approval_type"]
+          created_at: string
+          description: string | null
+          id: string
+          reference_id: string
+          requested_by: string
+          status: Database["public"]["Enums"]["approval_request_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approval_type: Database["public"]["Enums"]["approval_type"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          reference_id: string
+          requested_by: string
+          status?: Database["public"]["Enums"]["approval_request_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approval_type?: Database["public"]["Enums"]["approval_type"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          reference_id?: string
+          requested_by?: string
+          status?: Database["public"]["Enums"]["approval_request_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      approval_steps: {
+        Row: {
+          acted_at: string | null
+          approver_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          request_id: string
+          status: Database["public"]["Enums"]["approval_step_status"]
+          step_order: number
+        }
+        Insert: {
+          acted_at?: string | null
+          approver_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          request_id: string
+          status?: Database["public"]["Enums"]["approval_step_status"]
+          step_order?: number
+        }
+        Update: {
+          acted_at?: string | null
+          approver_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          request_id?: string
+          status?: Database["public"]["Enums"]["approval_step_status"]
+          step_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approval_steps_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "approval_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+          performed_at: string
+          performed_by: string | null
+          record_id: string
+          table_name: string
+        }
+        Insert: {
+          action: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          performed_at?: string
+          performed_by?: string | null
+          record_id: string
+          table_name: string
+        }
+        Update: {
+          action?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          performed_at?: string
+          performed_by?: string | null
+          record_id?: string
+          table_name?: string
+        }
+        Relationships: []
+      }
       budgets: {
         Row: {
           allocated_amount: number
@@ -90,6 +200,72 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      documents: {
+        Row: {
+          created_at: string
+          department_id: string | null
+          description: string | null
+          file_path: string
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          name: string
+          parent_document_id: string | null
+          project_id: string | null
+          tags: string[] | null
+          updated_at: string
+          uploaded_by: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          file_path: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          name: string
+          parent_document_id?: string | null
+          project_id?: string | null
+          tags?: string[] | null
+          updated_at?: string
+          uploaded_by: string
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          name?: string
+          parent_document_id?: string | null
+          project_id?: string | null
+          tags?: string[] | null
+          updated_at?: string
+          uploaded_by?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_parent_document_id_fkey"
+            columns: ["parent_document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       expenses: {
         Row: {
@@ -741,6 +917,14 @@ export type Database = {
         | "department_head"
         | "department_staff"
         | "general_staff"
+      approval_request_status:
+        | "pending"
+        | "in_progress"
+        | "approved"
+        | "rejected"
+        | "cancelled"
+      approval_step_status: "pending" | "approved" | "rejected" | "skipped"
+      approval_type: "expense" | "leave" | "budget" | "contract" | "document"
       budget_category:
         | "operational"
         | "marketing"
@@ -897,6 +1081,15 @@ export const Constants = {
         "department_staff",
         "general_staff",
       ],
+      approval_request_status: [
+        "pending",
+        "in_progress",
+        "approved",
+        "rejected",
+        "cancelled",
+      ],
+      approval_step_status: ["pending", "approved", "rejected", "skipped"],
+      approval_type: ["expense", "leave", "budget", "contract", "document"],
       budget_category: [
         "operational",
         "marketing",
