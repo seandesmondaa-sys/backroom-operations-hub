@@ -18,6 +18,9 @@ import {
   CalendarDays,
   HeartPulse,
   Banknote,
+  FolderOpen,
+  ClipboardCheck,
+  ScrollText,
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
 import { NavLink } from "@/components/NavLink";
@@ -47,6 +50,8 @@ const opsItems = [
   { title: "Workflow", url: "/workflow", icon: Workflow },
   { title: "Calendar", url: "/calendar", icon: CalendarDays },
   { title: "Messages", url: "/messages", icon: MessageSquare },
+  { title: "Documents", url: "/documents", icon: FolderOpen },
+  { title: "Approvals", url: "/approvals", icon: ClipboardCheck },
 ];
 
 const insightItems = [
@@ -74,6 +79,7 @@ export function AppSidebar({ onLogout }: { onLogout: () => void }) {
       label: "Admin",
       items: [
         { title: "Roles & Permissions", url: "/admin/roles", icon: Shield },
+        { title: "Audit Log", url: "/admin/audit", icon: ScrollText },
       ],
     });
   }
