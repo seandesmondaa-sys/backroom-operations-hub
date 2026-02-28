@@ -38,6 +38,123 @@ export type Database = {
         }
         Relationships: []
       }
+      hr_leave_requests: {
+        Row: {
+          created_at: string
+          days_count: number
+          end_date: string
+          id: string
+          leave_type: Database["public"]["Enums"]["leave_type"]
+          reason: string | null
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          start_date: string
+          status: Database["public"]["Enums"]["leave_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          days_count?: number
+          end_date: string
+          id?: string
+          leave_type?: Database["public"]["Enums"]["leave_type"]
+          reason?: string | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          start_date: string
+          status?: Database["public"]["Enums"]["leave_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          days_count?: number
+          end_date?: string
+          id?: string
+          leave_type?: Database["public"]["Enums"]["leave_type"]
+          reason?: string | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["leave_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hr_notes: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          id: string
+          is_confidential: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          id?: string
+          is_confidential?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          is_confidential?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hr_performance_logs: {
+        Row: {
+          created_at: string
+          id: string
+          improvements: string | null
+          logged_by: string
+          notes: string | null
+          period: string
+          rating: number | null
+          strengths: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          improvements?: string | null
+          logged_by: string
+          notes?: string | null
+          period: string
+          rating?: number | null
+          strengths?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          improvements?: string | null
+          logged_by?: string
+          notes?: string | null
+          period?: string
+          rating?: number | null
+          strengths?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       message_threads: {
         Row: {
           created_at: string
@@ -426,6 +543,15 @@ export type Database = {
         | "department_staff"
         | "general_staff"
       event_type: "meeting" | "follow_up" | "deadline" | "reminder" | "other"
+      leave_status: "pending" | "approved" | "rejected" | "cancelled"
+      leave_type:
+        | "annual"
+        | "sick"
+        | "personal"
+        | "maternity"
+        | "paternity"
+        | "unpaid"
+        | "other"
       recurrence_type: "none" | "daily" | "weekly" | "biweekly" | "monthly"
       task_priority: "urgent" | "high" | "medium" | "low"
       task_status: "backlog" | "todo" | "in_progress" | "waiting" | "done"
@@ -563,6 +689,16 @@ export const Constants = {
         "general_staff",
       ],
       event_type: ["meeting", "follow_up", "deadline", "reminder", "other"],
+      leave_status: ["pending", "approved", "rejected", "cancelled"],
+      leave_type: [
+        "annual",
+        "sick",
+        "personal",
+        "maternity",
+        "paternity",
+        "unpaid",
+        "other",
+      ],
       recurrence_type: ["none", "daily", "weekly", "biweekly", "monthly"],
       task_priority: ["urgent", "high", "medium", "low"],
       task_status: ["backlog", "todo", "in_progress", "waiting", "done"],

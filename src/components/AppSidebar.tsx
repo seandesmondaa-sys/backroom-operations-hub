@@ -16,6 +16,7 @@ import {
   Workflow,
   Gauge,
   CalendarDays,
+  HeartPulse,
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
 import { NavLink } from "@/components/NavLink";
@@ -61,6 +62,9 @@ export function AppSidebar({ onLogout }: { onLogout: () => void }) {
     { label: "CRM", items: crmItems },
     { label: "Operations", items: opsItems },
     { label: "Insights", items: insightItems },
+    { label: "Departments", items: [
+      { title: "HR", url: "/hr", icon: HeartPulse },
+    ]},
   ];
 
   if (isSuperAdmin) {

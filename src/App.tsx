@@ -23,6 +23,7 @@ import AdminRolesPage from "./pages/AdminRolesPage";
 import WorkflowTasksPage from "./pages/WorkflowTasksPage";
 import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 import CalendarPage from "./pages/CalendarPage";
+import HRModulePage from "./pages/HRModulePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -73,6 +74,7 @@ function AppRoutes() {
           <Route path="/workflow" element={<WorkflowTasksPage />} />
           <Route path="/dashboard" element={<ExecutiveDashboard />} />
           <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/hr" element={<HRModulePage />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
