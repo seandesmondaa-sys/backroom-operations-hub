@@ -228,18 +228,20 @@ function BudgetsTab() {
 function ExpensesTab() {
   const { user } = useAuth();
   const { data: expenses = [] } = useExpenses();
+  const { data: budgets = [] } = useBudgets();
   const createExpense = useCreateExpense();
   const updateStatus = useUpdateExpenseStatus();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ description: "", amount: "", category: "operational", vendor: "", expense_date: format(new Date(), "yyyy-MM-dd"), notes: "" });
+  const [form, setForm] = useState({ description: "", amount: "", category: "operational", vendor: "", expense_date: format(new Date(), "yyyy-MM-dd"), notes: "", budget_id: "" });
 
   const handleSubmit = () => {
     if (!form.description || !form.amount) return;
     createExpense.mutate({
       ...form,
       amount: parseFloat(form.amount),
+      budget_id: form.budget_id || null,
       submitted_by: user!.id,
-    }, { onSuccess: () => { setOpen(false); setForm({ description: "", amount: "", category: "operational", vendor: "", expense_date: format(new Date(), "yyyy-MM-dd"), notes: "" }); } });
+    }, { onSuccess: () => { setOpen(false); setForm({ description: "", amount: "", category: "operational", vendor: "", expense_date: format(new Date(), "yyyy-MM-dd"), notes: "", budget_id: "" }); } });
   };
 
   return (
@@ -258,6 +260,13 @@ function ExpensesTab() {
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Select value={form.budget_id} onValueChange={(v) => setForm({ ...form, budget_id: v === "none" ? "" : v })}>
+                <SelectTrigger><SelectValue placeholder="Link to budget (optional)" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No budget</SelectItem>
+                  {budgets.map((b: any) => <SelectItem key={b.id} value={b.id}>{b.name} ({money(Number(b.allocated_amount))})</SelectItem>)}
                 </SelectContent>
               </Select>
               <Input placeholder="Vendor" value={form.vendor} onChange={(e) => setForm({ ...form, vendor: e.target.value })} />
