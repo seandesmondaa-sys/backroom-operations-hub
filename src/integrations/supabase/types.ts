@@ -177,6 +177,211 @@ export type Database = {
           },
         ]
       }
+      campaigns: {
+        Row: {
+          budget: number | null
+          campaign_type: string | null
+          channels: string[] | null
+          created_at: string
+          created_by: string
+          department_id: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          name: string
+          spent: number | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["campaign_status"]
+          target_audience: string | null
+          updated_at: string
+        }
+        Insert: {
+          budget?: number | null
+          campaign_type?: string | null
+          channels?: string[] | null
+          created_at?: string
+          created_by: string
+          department_id?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name: string
+          spent?: number | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["campaign_status"]
+          target_audience?: string | null
+          updated_at?: string
+        }
+        Update: {
+          budget?: number | null
+          campaign_type?: string | null
+          channels?: string[] | null
+          created_at?: string
+          created_by?: string
+          department_id?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name?: string
+          spent?: number | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["campaign_status"]
+          target_audience?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      compliance_items: {
+        Row: {
+          category: string
+          completed_at: string | null
+          completed_by: string | null
+          contract_id: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          due_date: string | null
+          id: string
+          is_completed: boolean
+          project_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          completed_at?: string | null
+          completed_by?: string | null
+          contract_id?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          is_completed?: boolean
+          project_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          completed_at?: string | null
+          completed_by?: string | null
+          contract_id?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          is_completed?: boolean
+          project_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_items_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contracts: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          contract_type: Database["public"]["Enums"]["contract_type"]
+          counterparty: string | null
+          created_at: string
+          created_by: string
+          department_id: string | null
+          description: string | null
+          end_date: string | null
+          file_path: string | null
+          id: string
+          parent_contract_id: string | null
+          project_id: string | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["contract_status"]
+          tags: string[] | null
+          template_content: string | null
+          title: string
+          updated_at: string
+          value: number | null
+          version: number
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          contract_type?: Database["public"]["Enums"]["contract_type"]
+          counterparty?: string | null
+          created_at?: string
+          created_by: string
+          department_id?: string | null
+          description?: string | null
+          end_date?: string | null
+          file_path?: string | null
+          id?: string
+          parent_contract_id?: string | null
+          project_id?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["contract_status"]
+          tags?: string[] | null
+          template_content?: string | null
+          title: string
+          updated_at?: string
+          value?: number | null
+          version?: number
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          contract_type?: Database["public"]["Enums"]["contract_type"]
+          counterparty?: string | null
+          created_at?: string
+          created_by?: string
+          department_id?: string | null
+          description?: string | null
+          end_date?: string | null
+          file_path?: string | null
+          id?: string
+          parent_contract_id?: string | null
+          project_id?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["contract_status"]
+          tags?: string[] | null
+          template_content?: string | null
+          title?: string
+          updated_at?: string
+          value?: number | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_parent_contract_id_fkey"
+            columns: ["parent_contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       departments: {
         Row: {
           created_at: string
@@ -493,6 +698,134 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      leads: {
+        Row: {
+          assigned_to: string | null
+          company: string | null
+          converted_project_id: string | null
+          created_at: string
+          created_by: string
+          deal_type: Database["public"]["Enums"]["deal_type"] | null
+          department_id: string | null
+          email: string | null
+          funding_target: number | null
+          id: string
+          lead_score: number | null
+          name: string
+          notes: string | null
+          phone: string | null
+          readiness_stage: Database["public"]["Enums"]["readiness_stage"] | null
+          source: string | null
+          status: Database["public"]["Enums"]["lead_status"]
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          company?: string | null
+          converted_project_id?: string | null
+          created_at?: string
+          created_by: string
+          deal_type?: Database["public"]["Enums"]["deal_type"] | null
+          department_id?: string | null
+          email?: string | null
+          funding_target?: number | null
+          id?: string
+          lead_score?: number | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          readiness_stage?:
+            | Database["public"]["Enums"]["readiness_stage"]
+            | null
+          source?: string | null
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          company?: string | null
+          converted_project_id?: string | null
+          created_at?: string
+          created_by?: string
+          deal_type?: Database["public"]["Enums"]["deal_type"] | null
+          department_id?: string | null
+          email?: string | null
+          funding_target?: number | null
+          id?: string
+          lead_score?: number | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          readiness_stage?:
+            | Database["public"]["Enums"]["readiness_stage"]
+            | null
+          source?: string | null
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      media_assets: {
+        Row: {
+          asset_type: string
+          campaign_id: string | null
+          created_at: string
+          description: string | null
+          file_path: string
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          name: string
+          tags: string[] | null
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          asset_type?: string
+          campaign_id?: string | null
+          created_at?: string
+          description?: string | null
+          file_path: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          name: string
+          tags?: string[] | null
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          asset_type?: string
+          campaign_id?: string | null
+          created_at?: string
+          description?: string | null
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          name?: string
+          tags?: string[] | null
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_assets_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       message_threads: {
         Row: {
@@ -933,9 +1266,45 @@ export type Database = {
         | "technology"
         | "travel"
         | "other"
+      campaign_status:
+        | "planned"
+        | "active"
+        | "paused"
+        | "completed"
+        | "cancelled"
+      contract_status:
+        | "draft"
+        | "review"
+        | "pending_approval"
+        | "active"
+        | "expired"
+        | "terminated"
+      contract_type:
+        | "nda"
+        | "service_agreement"
+        | "investment_agreement"
+        | "mou"
+        | "consulting"
+        | "employment"
+        | "other"
+      deal_type:
+        | "equity"
+        | "debt"
+        | "mezzanine"
+        | "grant"
+        | "advisory"
+        | "other"
       event_type: "meeting" | "follow_up" | "deadline" | "reminder" | "other"
       expense_status: "pending" | "approved" | "rejected" | "paid"
       invoice_status: "draft" | "sent" | "paid" | "overdue" | "cancelled"
+      lead_status:
+        | "new"
+        | "contacted"
+        | "qualified"
+        | "proposal"
+        | "negotiation"
+        | "converted"
+        | "lost"
       leave_status: "pending" | "approved" | "rejected" | "cancelled"
       leave_type:
         | "annual"
@@ -945,6 +1314,12 @@ export type Database = {
         | "paternity"
         | "unpaid"
         | "other"
+      readiness_stage:
+        | "concept"
+        | "early_development"
+        | "structuring"
+        | "investment_ready"
+        | "capital_deployment"
       recurrence_type: "none" | "daily" | "weekly" | "biweekly" | "monthly"
       task_priority: "urgent" | "high" | "medium" | "low"
       task_status: "backlog" | "todo" | "in_progress" | "waiting" | "done"
@@ -1099,9 +1474,43 @@ export const Constants = {
         "travel",
         "other",
       ],
+      campaign_status: [
+        "planned",
+        "active",
+        "paused",
+        "completed",
+        "cancelled",
+      ],
+      contract_status: [
+        "draft",
+        "review",
+        "pending_approval",
+        "active",
+        "expired",
+        "terminated",
+      ],
+      contract_type: [
+        "nda",
+        "service_agreement",
+        "investment_agreement",
+        "mou",
+        "consulting",
+        "employment",
+        "other",
+      ],
+      deal_type: ["equity", "debt", "mezzanine", "grant", "advisory", "other"],
       event_type: ["meeting", "follow_up", "deadline", "reminder", "other"],
       expense_status: ["pending", "approved", "rejected", "paid"],
       invoice_status: ["draft", "sent", "paid", "overdue", "cancelled"],
+      lead_status: [
+        "new",
+        "contacted",
+        "qualified",
+        "proposal",
+        "negotiation",
+        "converted",
+        "lost",
+      ],
       leave_status: ["pending", "approved", "rejected", "cancelled"],
       leave_type: [
         "annual",
@@ -1111,6 +1520,13 @@ export const Constants = {
         "paternity",
         "unpaid",
         "other",
+      ],
+      readiness_stage: [
+        "concept",
+        "early_development",
+        "structuring",
+        "investment_ready",
+        "capital_deployment",
       ],
       recurrence_type: ["none", "daily", "weekly", "biweekly", "monthly"],
       task_priority: ["urgent", "high", "medium", "low"],
