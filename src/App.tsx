@@ -28,6 +28,9 @@ import FinancePage from "./pages/FinancePage";
 import DocumentsPage from "./pages/DocumentsPage";
 import ApprovalsPage from "./pages/ApprovalsPage";
 import AuditLogPage from "./pages/AuditLogPage";
+import BusinessDevPage from "./pages/BusinessDevPage";
+import LegalPage from "./pages/LegalPage";
+import MarketingPage from "./pages/MarketingPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -83,6 +86,9 @@ function AppRoutes() {
           <Route path="/documents" element={<DocumentsPage />} />
           <Route path="/approvals" element={<ApprovalsPage />} />
           <Route path="/admin/audit" element={<AuditLogPage />} />
+          <Route path="/business-dev" element={<BusinessDevPage />} />
+          <Route path="/legal" element={<LegalPage />} />
+          <Route path="/marketing" element={<MarketingPage />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

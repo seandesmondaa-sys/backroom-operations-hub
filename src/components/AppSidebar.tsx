@@ -21,6 +21,9 @@ import {
   FolderOpen,
   ClipboardCheck,
   ScrollText,
+  TrendingUp,
+  Scale,
+  Megaphone,
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
 import { NavLink } from "@/components/NavLink";
@@ -71,6 +74,9 @@ export function AppSidebar({ onLogout }: { onLogout: () => void }) {
     { label: "Departments", items: [
       { title: "HR", url: "/hr", icon: HeartPulse },
       { title: "Finance", url: "/finance", icon: Banknote },
+      { title: "Biz Dev", url: "/business-dev", icon: TrendingUp },
+      { title: "Legal", url: "/legal", icon: Scale },
+      { title: "Marketing", url: "/marketing", icon: Megaphone },
     ]},
   ];
 
