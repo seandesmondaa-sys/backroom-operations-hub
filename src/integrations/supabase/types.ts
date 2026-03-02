@@ -534,6 +534,36 @@ export type Database = {
           },
         ]
       }
+      hr_attendance: {
+        Row: {
+          clock_in: string
+          clock_out: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          total_hours: number | null
+          user_id: string
+        }
+        Insert: {
+          clock_in?: string
+          clock_out?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          total_hours?: number | null
+          user_id: string
+        }
+        Update: {
+          clock_in?: string
+          clock_out?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          total_hours?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       hr_leave_requests: {
         Row: {
           created_at: string
@@ -1129,6 +1159,57 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      project_readiness: {
+        Row: {
+          auto_score: number
+          created_at: string
+          has_feasibility_study: boolean
+          has_financial_model: boolean
+          has_legal_docs: boolean
+          has_regulatory_approvals: boolean
+          has_revenue_projections: boolean
+          id: string
+          manual_override_stage: string | null
+          notes: string | null
+          project_id: string
+          readiness_stage: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          auto_score?: number
+          created_at?: string
+          has_feasibility_study?: boolean
+          has_financial_model?: boolean
+          has_legal_docs?: boolean
+          has_regulatory_approvals?: boolean
+          has_revenue_projections?: boolean
+          id?: string
+          manual_override_stage?: string | null
+          notes?: string | null
+          project_id: string
+          readiness_stage?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          auto_score?: number
+          created_at?: string
+          has_feasibility_study?: boolean
+          has_financial_model?: boolean
+          has_legal_docs?: boolean
+          has_regulatory_approvals?: boolean
+          has_revenue_projections?: boolean
+          id?: string
+          manual_override_stage?: string | null
+          notes?: string | null
+          project_id?: string
+          readiness_stage?: string
+          updated_at?: string
+          updated_by?: string | null
         }
         Relationships: []
       }

@@ -24,6 +24,8 @@ import {
   TrendingUp,
   Scale,
   Megaphone,
+  BarChart3,
+  ShieldCheck,
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
 import { NavLink } from "@/components/NavLink";
@@ -59,6 +61,8 @@ const opsItems = [
 
 const insightItems = [
   { title: "Dashboard", url: "/dashboard", icon: Gauge },
+  { title: "Analytics", url: "/analytics", icon: BarChart3 },
+  { title: "Readiness", url: "/readiness", icon: ShieldCheck },
   { title: "KPIs", url: "/portfolio", icon: Activity },
   { title: "Team", url: "/team", icon: UsersRound },
 ];
