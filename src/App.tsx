@@ -31,6 +31,8 @@ import AuditLogPage from "./pages/AuditLogPage";
 import BusinessDevPage from "./pages/BusinessDevPage";
 import LegalPage from "./pages/LegalPage";
 import MarketingPage from "./pages/MarketingPage";
+import AnalyticsPage from "./pages/AnalyticsPage";
+import ReadinessPage from "./pages/ReadinessPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -89,6 +91,8 @@ function AppRoutes() {
           <Route path="/business-dev" element={<BusinessDevPage />} />
           <Route path="/legal" element={<LegalPage />} />
           <Route path="/marketing" element={<MarketingPage />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
+          <Route path="/readiness" element={<ReadinessPage />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

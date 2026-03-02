@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { format, differenceInBusinessDays } from "date-fns";
+import { useAttendance, useActiveClockIn, useClockIn, useClockOut } from "@/hooks/use-attendance";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsSuperAdmin, useAllUserRoles } from "@/hooks/use-roles";
 import {
@@ -25,7 +26,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import {
-  Plus, CalendarIcon, Users, Star, FileText, Shield, Check, X, Trash2, Lock,
+  Plus, CalendarIcon, Users, Star, FileText, Shield, Check, X, Trash2, Lock, Clock,
 } from "lucide-react";
 
 // ─── Leave Request Form ────────────────────────────────────
@@ -181,6 +182,10 @@ export default function HRModulePage() {
   const { data: leaves = [], isLoading: leavesLoading } = useLeaveRequests();
   const { data: perfLogs = [], isLoading: perfLoading } = usePerformanceLogs();
   const { data: hrNotes = [], isLoading: notesLoading } = useHRNotes();
+  const { data: attendance = [], isLoading: attLoading } = useAttendance();
+  const { data: activeClockIn } = useActiveClockIn();
+  const clockIn = useClockIn();
+  const clockOut = useClockOut();
   const reviewLeave = useReviewLeaveRequest();
   const deleteNote = useDeleteHRNote();
 
@@ -188,8 +193,7 @@ export default function HRModulePage() {
   const [perfOpen, setPerfOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
 
-  const isManager = isSuperAdmin; // department_head check also applies via RLS
-
+  const isManager = isSuperAdmin;
   const isLoading = membersLoading || leavesLoading;
 
   if (isLoading) {
@@ -204,6 +208,7 @@ export default function HRModulePage() {
           <TabsList>
             <TabsTrigger value="staff" className="text-xs gap-1.5"><Users className="h-3.5 w-3.5" /> Staff</TabsTrigger>
             <TabsTrigger value="leave" className="text-xs gap-1.5"><CalendarIcon className="h-3.5 w-3.5" /> Leave</TabsTrigger>
+            <TabsTrigger value="attendance" className="text-xs gap-1.5"><Clock className="h-3.5 w-3.5" /> Attendance</TabsTrigger>
             {isManager && <TabsTrigger value="performance" className="text-xs gap-1.5"><Star className="h-3.5 w-3.5" /> Performance</TabsTrigger>}
             {isManager && <TabsTrigger value="notes" className="text-xs gap-1.5"><Lock className="h-3.5 w-3.5" /> Notes</TabsTrigger>}
           </TabsList>
@@ -287,6 +292,57 @@ export default function HRModulePage() {
                   ))}
                   {leaves.length === 0 && (
                     <TableRow><TableCell colSpan={isManager ? 7 : 6} className="text-center text-sm text-muted-foreground py-8">No leave requests</TableCell></TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+
+          {/* ── Attendance ── */}
+          <TabsContent value="attendance" className="mt-4 space-y-4">
+            <div className="flex justify-between items-center">
+              <p className="text-xs text-muted-foreground">Track daily clock-in/out</p>
+              {activeClockIn ? (
+                <Button size="sm" className="h-8 text-xs" variant="destructive" onClick={() => clockOut.mutate(activeClockIn.id)} disabled={clockOut.isPending}>
+                  <Clock className="h-3.5 w-3.5 mr-1" /> Clock Out
+                </Button>
+              ) : (
+                <Button size="sm" className="h-8 text-xs" onClick={() => clockIn.mutate(undefined)} disabled={clockIn.isPending}>
+                  <Clock className="h-3.5 w-3.5 mr-1" /> Clock In
+                </Button>
+              )}
+            </div>
+            {activeClockIn && (
+              <Card className="border-success/30 bg-success/5">
+                <CardContent className="p-3 flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
+                  <span className="text-xs font-medium">Currently clocked in since {format(new Date(activeClockIn.clock_in), "h:mm a")}</span>
+                </CardContent>
+              </Card>
+            )}
+            <div className="rounded-lg border border-border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50">
+                    <TableHead className="text-xs font-semibold">Staff</TableHead>
+                    <TableHead className="text-xs font-semibold">Date</TableHead>
+                    <TableHead className="text-xs font-semibold">Clock In</TableHead>
+                    <TableHead className="text-xs font-semibold">Clock Out</TableHead>
+                    <TableHead className="text-xs font-semibold">Hours</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {attendance.map((a) => (
+                    <TableRow key={a.id}>
+                      <TableCell className="text-xs font-medium">{a.user_name}</TableCell>
+                      <TableCell className="text-xs font-mono text-muted-foreground">{format(new Date(a.clock_in), "MMM d, yyyy")}</TableCell>
+                      <TableCell className="text-xs font-mono">{format(new Date(a.clock_in), "h:mm a")}</TableCell>
+                      <TableCell className="text-xs font-mono">{a.clock_out ? format(new Date(a.clock_out), "h:mm a") : <Badge variant="outline" className="text-[10px] bg-success/10 text-success">Active</Badge>}</TableCell>
+                      <TableCell className="text-xs font-mono">{a.total_hours ? `${a.total_hours}h` : "—"}</TableCell>
+                    </TableRow>
+                  ))}
+                  {attendance.length === 0 && (
+                    <TableRow><TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-8">No attendance records</TableCell></TableRow>
                   )}
                 </TableBody>
               </Table>
