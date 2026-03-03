@@ -26,6 +26,8 @@ import {
   Megaphone,
   BarChart3,
   ShieldCheck,
+  Download,
+  Plug,
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
 import { NavLink } from "@/components/NavLink";
@@ -81,6 +83,10 @@ export function AppSidebar({ onLogout }: { onLogout: () => void }) {
       { title: "Biz Dev", url: "/business-dev", icon: TrendingUp },
       { title: "Legal", url: "/legal", icon: Scale },
       { title: "Marketing", url: "/marketing", icon: Megaphone },
+    ]},
+    { label: "System", items: [
+      { title: "Exports", url: "/exports", icon: Download },
+      { title: "Integrations", url: "/integrations", icon: Plug },
     ]},
   ];
 
