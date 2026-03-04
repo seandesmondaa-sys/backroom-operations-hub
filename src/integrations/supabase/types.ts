@@ -1310,6 +1310,97 @@ export type Database = {
           },
         ]
       }
+      workflow_pipelines: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          current_stage: Database["public"]["Enums"]["workflow_stage"]
+          description: string | null
+          id: string
+          lead_id: string | null
+          status: Database["public"]["Enums"]["workflow_pipeline_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          current_stage?: Database["public"]["Enums"]["workflow_stage"]
+          description?: string | null
+          id?: string
+          lead_id?: string | null
+          status?: Database["public"]["Enums"]["workflow_pipeline_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          current_stage?: Database["public"]["Enums"]["workflow_stage"]
+          description?: string | null
+          id?: string
+          lead_id?: string | null
+          status?: Database["public"]["Enums"]["workflow_pipeline_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_pipelines_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workflow_stage_gates: {
+        Row: {
+          acted_at: string | null
+          approver_id: string | null
+          created_at: string
+          from_stage: Database["public"]["Enums"]["workflow_stage"]
+          id: string
+          notes: string | null
+          pipeline_id: string
+          status: Database["public"]["Enums"]["stage_gate_status"]
+          to_stage: Database["public"]["Enums"]["workflow_stage"]
+        }
+        Insert: {
+          acted_at?: string | null
+          approver_id?: string | null
+          created_at?: string
+          from_stage: Database["public"]["Enums"]["workflow_stage"]
+          id?: string
+          notes?: string | null
+          pipeline_id: string
+          status?: Database["public"]["Enums"]["stage_gate_status"]
+          to_stage: Database["public"]["Enums"]["workflow_stage"]
+        }
+        Update: {
+          acted_at?: string | null
+          approver_id?: string | null
+          created_at?: string
+          from_stage?: Database["public"]["Enums"]["workflow_stage"]
+          id?: string
+          notes?: string | null
+          pipeline_id?: string
+          status?: Database["public"]["Enums"]["stage_gate_status"]
+          to_stage?: Database["public"]["Enums"]["workflow_stage"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_stage_gates_pipeline_id_fkey"
+            columns: ["pipeline_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_pipelines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1402,8 +1493,11 @@ export type Database = {
         | "investment_ready"
         | "capital_deployment"
       recurrence_type: "none" | "daily" | "weekly" | "biweekly" | "monthly"
+      stage_gate_status: "pending" | "approved" | "rejected" | "skipped"
       task_priority: "urgent" | "high" | "medium" | "low"
       task_status: "backlog" | "todo" | "in_progress" | "waiting" | "done"
+      workflow_pipeline_status: "active" | "paused" | "completed" | "cancelled"
+      workflow_stage: "sales" | "legal" | "finance" | "operations" | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1610,8 +1704,11 @@ export const Constants = {
         "capital_deployment",
       ],
       recurrence_type: ["none", "daily", "weekly", "biweekly", "monthly"],
+      stage_gate_status: ["pending", "approved", "rejected", "skipped"],
       task_priority: ["urgent", "high", "medium", "low"],
       task_status: ["backlog", "todo", "in_progress", "waiting", "done"],
+      workflow_pipeline_status: ["active", "paused", "completed", "cancelled"],
+      workflow_stage: ["sales", "legal", "finance", "operations", "completed"],
     },
   },
 } as const

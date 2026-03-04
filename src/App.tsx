@@ -35,6 +35,7 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import ReadinessPage from "./pages/ReadinessPage";
 import ExportsPage from "./pages/ExportsPage";
 import IntegrationsPage from "./pages/IntegrationsPage";
+import WorkflowRoutingPage from "./pages/WorkflowRoutingPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -97,6 +98,7 @@ function AppRoutes() {
           <Route path="/readiness" element={<ReadinessPage />} />
           <Route path="/exports" element={<ExportsPage />} />
           <Route path="/integrations" element={<IntegrationsPage />} />
+          <Route path="/routing" element={<WorkflowRoutingPage />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

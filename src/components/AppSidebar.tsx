@@ -14,6 +14,7 @@ import {
   MessageSquare,
   Shield,
   Workflow,
+  GitBranch,
   Gauge,
   CalendarDays,
   HeartPulse,
@@ -55,6 +56,7 @@ const crmItems = [
 
 const opsItems = [
   { title: "Workflow", url: "/workflow", icon: Workflow },
+  { title: "Routing", url: "/routing", icon: GitBranch },
   { title: "Calendar", url: "/calendar", icon: CalendarDays },
   { title: "Messages", url: "/messages", icon: MessageSquare },
   { title: "Documents", url: "/documents", icon: FolderOpen },
