@@ -177,18 +177,27 @@ export function useApproveStageGate() {
         }
         await supabase.from("workflow_pipelines").update(updates).eq("id", pipeline_id);
 
-        // Notify department heads
+        // Notify department heads + pipeline creator
+        const { data: pipeline } = await supabase.from("workflow_pipelines").select("title, created_by").eq("id", pipeline_id).single();
         const { data: heads } = await supabase
           .from("user_roles")
           .select("user_id")
           .eq("role", "department_head");
-        if (heads && heads.length > 0) {
-          const { data: pipeline } = await supabase.from("workflow_pipelines").select("title").eq("id", pipeline_id).single();
-          const notifications = heads.map((h) => ({
-            user_id: h.user_id,
-            type: "system",
+
+        const recipientIds = new Set<string>();
+        // Always notify the pipeline creator
+        if (pipeline) recipientIds.add((pipeline as any).created_by);
+        // Notify department heads
+        (heads || []).forEach((h) => recipientIds.add(h.user_id));
+        // Don't notify the approver themselves
+        recipientIds.delete(user.id);
+
+        if (recipientIds.size > 0) {
+          const notifications = Array.from(recipientIds).map((uid) => ({
+            user_id: uid,
+            type: "workflow",
             title: `Workflow Advanced: ${(pipeline as any)?.title || "Pipeline"}`,
-            body: `Stage transition approved. Now in ${STAGE_LABELS[nextStage]}.`,
+            body: `Stage transition approved by you. Now in ${STAGE_LABELS[nextStage]}.`,
           }));
           await supabase.from("notifications").insert(notifications);
         }
