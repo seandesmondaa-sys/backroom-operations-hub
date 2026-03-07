@@ -90,7 +90,7 @@ export function useConvertLeadToProject() {
       if (pipeErr) throw pipeErr;
 
       // 3. Create stage gates for the pipeline
-      const transitions = [
+      const transitions: { from_stage: "sales" | "legal" | "finance" | "operations"; to_stage: "legal" | "finance" | "operations" | "completed" }[] = [
         { from_stage: "sales", to_stage: "legal" },
         { from_stage: "legal", to_stage: "finance" },
         { from_stage: "finance", to_stage: "operations" },
@@ -100,7 +100,7 @@ export function useConvertLeadToProject() {
         pipeline_id: pipeline.id,
         from_stage: t.from_stage,
         to_stage: t.to_stage,
-        status: "pending",
+        status: "pending" as const,
       }));
       await supabase.from("workflow_stage_gates").insert(gates);
 
