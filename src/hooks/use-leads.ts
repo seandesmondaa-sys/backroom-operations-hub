@@ -78,14 +78,40 @@ export function useConvertLeadToProject() {
       });
       if (taskErr) throw taskErr;
 
-      // 2. Mark lead as converted
+      // 2. Create a workflow pipeline starting at Sales stage
+      const { data: pipeline, error: pipeErr } = await supabase.from("workflow_pipelines").insert({
+        title: `Pipeline: ${leadName}`,
+        description: `Auto-created from lead conversion.`,
+        current_stage: "sales",
+        status: "active",
+        lead_id: leadId,
+        created_by: user!.id,
+      } as any).select("id").single();
+      if (pipeErr) throw pipeErr;
+
+      // 3. Create stage gates for the pipeline
+      const transitions = [
+        { from_stage: "sales", to_stage: "legal" },
+        { from_stage: "legal", to_stage: "finance" },
+        { from_stage: "finance", to_stage: "operations" },
+        { from_stage: "operations", to_stage: "completed" },
+      ];
+      const gates = transitions.map((t) => ({
+        pipeline_id: pipeline.id,
+        from_stage: t.from_stage,
+        to_stage: t.to_stage,
+        status: "pending",
+      }));
+      await supabase.from("workflow_stage_gates").insert(gates);
+
+      // 4. Mark lead as converted
       const { error: leadErr } = await supabase
         .from("leads")
         .update({ status: "converted" as any, converted_project_id: leadName })
         .eq("id", leadId);
       if (leadErr) throw leadErr;
 
-      // 3. Send notifications to all department heads
+      // 5. Send notifications to all department heads + creator
       const { data: heads } = await supabase
         .from("user_roles")
         .select("user_id")
