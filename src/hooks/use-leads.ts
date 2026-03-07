@@ -130,7 +130,8 @@ export function useConvertLeadToProject() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["leads"] });
       qc.invalidateQueries({ queryKey: ["os-tasks"] });
-      toast({ title: "Lead converted to project", description: "Department heads have been notified." });
+      qc.invalidateQueries({ queryKey: ["workflow-pipelines"] });
+      toast({ title: "Lead converted to project", description: "Workflow pipeline created. Department heads notified." });
     },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
